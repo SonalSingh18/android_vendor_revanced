@@ -45,8 +45,15 @@ fun ReVancedScreen(
     onToggle: (Boolean) -> Unit,
     onReboot: () -> Unit
 ) {
+    val context = LocalContext.current
     var isEnabled by remember { mutableStateOf(ReVancedManager.isEnabled()) }
     var showRebootDialog by remember { mutableStateOf(false) }
+    val youTubeVersion = remember {
+        ReVancedManager.getAppVersion(context, ReVancedManager.PACKAGE_YOUTUBE)
+    }
+    val youTubeMusicVersion = remember {
+        ReVancedManager.getAppVersion(context, ReVancedManager.PACKAGE_YOUTUBE_MUSIC)
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background
@@ -130,7 +137,7 @@ fun ReVancedScreen(
             // App Info Cards
             AppInfoCard(
                 title = "YouTube",
-                version = "v20.45.36",
+                version = youTubeVersion,
                 icon = Icons.Default.PlayArrow,
                 status = if (isEnabled) "Patched" else "Stock"
             )
@@ -139,7 +146,7 @@ fun ReVancedScreen(
 
             AppInfoCard(
                 title = "YouTube Music",
-                version = "v8.44.54",
+                version = youTubeMusicVersion,
                 icon = Icons.Default.PlayArrow,
                 status = if (isEnabled) "Patched" else "Stock"
             )
@@ -224,7 +231,7 @@ fun GlassCard(content: @Composable () -> Unit) {
 @Composable
 fun AppInfoCard(
     title: String,
-    version: String,
+    version: String?,
     icon: ImageVector,
     status: String
 ) {
@@ -250,7 +257,11 @@ fun AppInfoCard(
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(title, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                Text("Version: $version", fontSize = 12.sp, color = Color.Gray)
+                Text(
+                    if (version != null) "Version: v$version" else "Version: unknown",
+                    fontSize = 12.sp,
+                    color = Color.Gray
+                )
                 Text(status, fontSize = 12.sp, color = Color.Gray)
             }
         }
